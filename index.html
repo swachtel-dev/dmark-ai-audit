@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DMARK I — AI Completability Audit</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a;
+  --paper: #f6f4f0;
+  --mid: #8a8580;
+  --accent: #c44b25;
+  --accent-light: #f0ddd5;
+  --border: #d8d4cf;
+  --card: #ffffff;
+  --full: #2d8a4e;
+  --mostly: #3b7dd8;
+  --partial: #d4920a;
+  --not: #b03a2e;
+  --tag-full: #e6f4ea;
+  --tag-mostly: #e3edf9;
+  --tag-partial: #fef3d6;
+  --tag-not: #fce4e1;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'IBM Plex Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.shell {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+/* ── Tab nav ── */
+.tab-bar {
+  display: flex;
+  gap: 2px;
+  border-bottom: 2px solid var(--ink);
+  margin-bottom: 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--paper);
+  padding-top: 12px;
+}
+
+.tab-btn {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 12px 20px 10px;
+  border: 2px solid transparent;
+  border-bottom: none;
+  background: transparent;
+  color: var(--mid);
+  cursor: pointer;
+  transition: all 0.15s;
+  border-radius: 4px 4px 0 0;
+}
+
+.tab-btn:hover { color: var(--ink); }
+
+.tab-btn.active {
+  background: var(--card);
+  color: var(--ink);
+  border-color: var(--ink);
+  position: relative;
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--card);
+}
+
+.tab-panel { display: none; padding-top: 32px; }
+.tab-panel.active { display: block; }
+
+/* ── Cover ── */
+.cover {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.cover-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.cover h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(36px, 5vw, 52px);
+  line-height: 1.15;
+  font-weight: 400;
+  margin-bottom: 12px;
+}
+
+.cover .subtitle {
+  font-size: 18px;
+  color: var(--mid);
+  font-weight: 300;
+  margin-bottom: 48px;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-bottom: 48px;
+}
+
+.meta-cell {
+  background: var(--card);
+  padding: 16px 20px;
+}
+
+.meta-cell dt {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 4px;
+}
+
+.meta-cell dd {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.cover-summary {
+  border-left: 3px solid var(--accent);
+  padding-left: 20px;
+  max-width: 640px;
+}
+
+.cover-summary p {
+  font-size: 15px;
+  color: #444;
+  line-height: 1.7;
+}
+
+.point-bar-section { margin-top: 48px; }
+
+.point-bar-section h3 {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 16px;
+}
+
+.point-bar {
+  display: flex;
+  height: 32px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+
+.point-bar > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: white;
+  letter-spacing: 0.02em;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: width 0.6s ease;
+}
+
+.bar-full { background: var(--full); }
+.bar-mostly { background: var(--mostly); }
+.bar-partial { background: var(--partial); }
+.bar-not { background: var(--not); }
+
+.bar-legend {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.bar-legend span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--mid);
+}
+
+.bar-legend .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ── Prompts & Outputs ── */
+.week-section {
+  margin-bottom: 48px;
+}
+
+.week-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+  margin-bottom: 20px;
+}
+
+.week-header h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.week-header .pts {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--mid);
+}
+
+.assignment-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.assignment-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  cursor: pointer;
+  gap: 12px;
+  user-select: none;
+}
+
+.assignment-head:hover { background: #fafaf8; }
+
+.assignment-title {
+  font-weight: 500;
+  font-size: 14px;
+  flex: 1;
+}
+
+.pts-badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--mid);
+  flex-shrink: 0;
+}
+
+.status-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.tag-full { background: var(--tag-full); color: var(--full); }
+.tag-mostly { background: var(--tag-mostly); color: var(--mostly); }
+.tag-partial { background: var(--tag-partial); color: var(--partial); }
+.tag-not { background: var(--tag-not); color: var(--not); }
+
+.chevron {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+  color: var(--mid);
+}
+
+.assignment-card.open .chevron { transform: rotate(180deg); }
+
+.assignment-body {
+  display: none;
+  padding: 0 20px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.assignment-card.open .assignment-body { display: block; padding-top: 16px; }
+
+.assignment-body h4 {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin: 16px 0 8px;
+}
+
+.assignment-body h4:first-child { margin-top: 0; }
+
+.assignment-body p, .assignment-body li {
+  font-size: 14px;
+  line-height: 1.65;
+  color: #444;
+}
+
+.assignment-body ul, .assignment-body ol {
+  padding-left: 20px;
+  margin-bottom: 8px;
+}
+
+.assignment-body li { margin-bottom: 4px; }
+
+.sample-output {
+  background: #f9f8f6;
+  border-left: 3px solid var(--border);
+  padding: 14px 18px;
+  margin: 12px 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+.sample-output strong { color: var(--ink); }
+
+.gap-note {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--accent);
+  margin-top: 8px;
+}
+
+/* ── Process & Results ── */
+.process-section { margin-bottom: 40px; }
+
+.process-section h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 24px;
+  font-weight: 400;
+  margin-bottom: 16px;
+}
+
+.process-section h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 24px 0 8px;
+}
+
+.process-section p, .process-section li {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #444;
+}
+
+.process-section ul, .process-section ol {
+  padding-left: 20px;
+  margin-bottom: 12px;
+}
+
+.process-section li { margin-bottom: 6px; }
+
+.findings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 20px 0;
+}
+
+@media (max-width: 640px) {
+  .findings-grid { grid-template-columns: 1fr; }
+}
+
+.finding-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 20px;
+}
+
+.finding-card h4 {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 8px;
+}
+
+.finding-card .num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 32px;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.finding-card p {
+  font-size: 13px;
+  color: var(--mid);
+}
+
+.blocker-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 13px;
+}
+
+.blocker-table th {
+  text-align: left;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mid);
+  padding: 8px 12px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.blocker-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.blocker-table tr:last-child td { border-bottom: none; }
+
+.scenario-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 13px;
+}
+
+.scenario-table th {
+  text-align: left;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mid);
+  padding: 8px 12px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.scenario-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.scenario-table tr:last-child td { border-bottom: none; }
+
+.scenario-table .range {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 500;
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<nav class="tab-bar">
+  <button class="tab-btn active" data-tab="cover">Cover</button>
+  <button class="tab-btn" data-tab="work">Prompts &amp; Outputs</button>
+  <button class="tab-btn" data-tab="process">Process &amp; Results</button>
+</nav>
+
+<!-- ════════════════════════════════════════ COVER ════════════════════════════════════════ -->
+<section class="tab-panel active" id="cover">
+<div class="cover">
+  <div class="cover-label">AI Completability Audit</div>
+  <h1>Introduction to<br>Digital Marketing</h1>
+  <p class="subtitle">DMARK I &middot; Full Course Assessment</p>
+
+  <dl class="meta-grid">
+    <div class="meta-cell"><dt>Course</dt><dd>DMARK I &mdash; Fall 2025 Term A</dd></div>
+    <div class="meta-cell"><dt>Instructor</dt><dd>Herv&eacute; Horner</dd></div>
+    <div class="meta-cell"><dt>Platform</dt><dd>Rize Learn + Canvas</dd></div>
+    <div class="meta-cell"><dt>Auditor</dt><dd>Claude Opus 4.6</dd></div>
+    <div class="meta-cell"><dt>Date</dt><dd>March 26, 2026</dd></div>
+    <div class="meta-cell"><dt>Scope</dt><dd>8 weeks &middot; 29 assignments &middot; 1,000 pts</dd></div>
+  </dl>
+
+  <div class="cover-summary">
+    <p>This audit navigated the full DMARK I course through Rize Learn and Canvas as an instructor-view student, capturing every graded assignment prompt, rubric, and quiz question. For each assignment, the audit assessed whether Claude Opus 4.6 could produce a submission and identified specific blockers.</p>
+    <p style="margin-top:12px">Of the 1,000 graded points in the course, <strong>610 points (61%)</strong> are fully or mostly completable by AI with no human involvement. With a human providing screenshots and visual assets, that rises to <strong>~800 points (80%)</strong>.</p>
+  </div>
+
+  <div class="point-bar-section">
+    <h3>Points by AI Completability</h3>
+    <div class="point-bar">
+      <div class="bar-full" style="width:24%">240 pts</div>
+      <div class="bar-mostly" style="width:37%">370 pts</div>
+      <div class="bar-partial" style="width:17%">170 pts</div>
+      <div class="bar-not" style="width:13%">130 pts</div>
+    </div>
+    <div class="bar-legend">
+      <span><span class="dot" style="background:var(--full)"></span>Fully completable (240 pts)</span>
+      <span><span class="dot" style="background:var(--mostly)"></span>Mostly completable (370 pts)</span>
+      <span><span class="dot" style="background:var(--partial)"></span>Partially completable (170 pts)</span>
+      <span><span class="dot" style="background:var(--not)"></span>Not completable (130 pts)</span>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════════════════════════ PROMPTS & OUTPUTS ════════════════════════════════════════ -->
+<section class="tab-panel" id="work">
+
+<!-- Week 1 -->
+<div class="week-section">
+<div class="week-header"><h2>Week 1</h2><span class="pts">80 pts &middot; Introductions &amp; The Marketing Funnel</span></div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Onboarding Discussion: Welcome to Digital Marketing</span>
+    <span class="pts-badge">15 pts</span>
+    <span class="status-tag tag-mostly">Mostly</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>100+ word discussion post: introduce yourself (name, school, year, fun fact, which topic excites you most), share an ad that worked on you with a screenshot, explain where you saw it and why it worked.</p>
+    <h4>AI Output</h4>
+    <div class="sample-output">
+      <strong>Awareness &mdash; Instagram Content Strategy</strong><br>
+      Hi everyone! I'm [Name], a sophomore at [School] majoring in Business Administration. Fun fact: I've visited every national park on the East Coast! I'm most excited about the social media marketing units.<br><br>
+      An ad that genuinely worked on me was a Spotify Wrapped-style Instagram story ad for Headspace. It showed my listening habits and said something like "You listened to 47 hours of lo-fi beats &mdash; sounds like you could use some meditation." It felt personalized, playful, and non-judgmental. I saw it in my Instagram stories feed in December. It worked because it used data I already shared to make the pitch feel personal rather than generic. I didn't feel sold to &mdash; I felt understood.
+    </div>
+    <p class="gap-note">Gap: No actual screenshot of the ad.</p>
+  </div>
+</div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Onboarding Quiz</span>
+    <span class="pts-badge">10 pts</span>
+    <span class="status-tag tag-full">Full</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>12-question multiple choice quiz on academic policies, platform navigation, and course logistics. 2 attempts, no time limit.</p>
+    <h4>AI Output</h4>
+    <p>All 12 questions answered correctly from general knowledge of LMS policies and the course welcome video content. Examples: "What is Rize Education?" &rarr; A course-sharing platform. "Approved use of ChatGPT?" &rarr; Asking it to explain a complex topic.</p>
+    <p><strong>Estimated score: 10/10</strong></p>
+  </div>
+</div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Onboarding Survey</span>
+    <span class="pts-badge">15 pts</span>
+    <span class="status-tag tag-full">Full</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>Completion-based survey. Graded on submission, not content.</p>
+    <h4>AI Output</h4>
+    <p>Can complete any survey form with plausible responses.</p>
+  </div>
+</div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Assignment 1: Ghia Funnel Analysis</span>
+    <span class="pts-badge">40 pts</span>
+    <span class="status-tag tag-mostly">Mostly</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>300-500 word document: mini-audit of Ghia's website, Instagram, and Amazon reviews. Identify one example per funnel stage (Awareness, Consideration, Conversion, Loyalty) with screenshots and analysis.</p>
+    <h4>AI Output</h4>
+    <div class="sample-output">
+      <strong>Awareness &mdash; Instagram Content Strategy:</strong> Ghia's Instagram features vibrant, lifestyle-driven content that positions the brand as aspirational. Posts showcase Ghia in social settings &mdash; dinner parties, rooftop gatherings &mdash; creating awareness through aesthetic association rather than hard selling.<br><br>
+      <strong>Consideration &mdash; Customer Reviews:</strong> With 4+ star ratings on Amazon, Ghia leverages social proof. Positive reviews emphasize taste and the alcohol-free lifestyle.<br><br>
+      <strong>Conversion &mdash; Homepage Pop-up:</strong> A pop-up offers 10% off your first order in exchange for an email signup. Textbook conversion tactic.<br><br>
+      <strong>Loyalty &mdash; Subscribe &amp; Save:</strong> Ghia offers subscription pricing and post-purchase recipe emails to keep customers engaged.
+    </div>
+    <p class="gap-note">Gap: Screenshots of website, Instagram, Amazon reviews needed from a human.</p>
+  </div>
+</div>
+</div>
+
+<!-- Week 2 -->
+<div class="week-section">
+<div class="week-header"><h2>Week 2</h2><span class="pts">140 pts &middot; Websites &amp; Email Marketing</span></div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Onboarding: Build an AI-Assisted Study Tool</span>
+    <span class="pts-badge">10 pts</span>
+    <span class="status-tag tag-partial">Partial</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>Create a study tool using AI "Green Light" principles, screenshot the AI prompts used, and write a 50-100 word reflection on how you ensured the work was your own.</p>
+    <h4>AI Output</h4>
+    <p>AI can produce the study tool and reflection text. However, this assignment explicitly teaches responsible AI use via a Green/Yellow/Red light system. An AI completing it would be the exact "Red Light" scenario the assignment warns against. Cannot produce a genuine screenshot of an AI conversation.</p>
+    <p class="gap-note">Gap: The assignment's pedagogical purpose is fundamentally anti-AI-completion.</p>
+  </div>
+</div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Discussion 1: Bad Website Design</span>
+    <span class="pts-badge">20 pts</span>
+    <span class="status-tag tag-mostly">Mostly</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>Visit userinyerface.com, screenshot something frustrating, write ~100 words on: why it was frustrating, how similar issues drive customers away, what it teaches about website design.</p>
+    <h4>AI Output</h4>
+    <div class="sample-output">
+      The most frustrating element on User Inyerface was the password creation form. The placeholder text doesn't disappear when you click into the field &mdash; you have to manually delete "Choose Password" before typing your own. Combined with obscure requirements and a countdown timer creating artificial urgency, even the simplest signup task becomes maddening.<br><br>
+      On a real e-commerce site, this kind of friction at the account creation stage would kill conversions. This teaches marketers that even small UX failures compound &mdash; each friction point is another reason for a customer to leave.
+    </div>
+    <p class="gap-note">Gap: Screenshot requires browser automation or human capture.</p>
+  </div>
+</div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Assignment 2: Website Audit &mdash; Strategy Meets UX</span>
+    <span class="pts-badge">40 pts</span>
+    <span class="status-tag tag-mostly">Mostly</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>Choose a brand website, audit it (first impressions, navigation, CTAs, mobile friendliness, funnel strategy, Google PageSpeed Insights), write a 300-500 word brief with strengths and improvements.</p>
+    <h4>AI Output</h4>
+    <p>AI can visit any website, analyze UX, evaluate funnel strategy, and run Google PageSpeed Insights. Can produce a detailed, professional audit brief with specific observations per rubric criterion.</p>
+    <p class="gap-note">Gap: Screenshots of the website and PageSpeed results.</p>
+  </div>
+</div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Assignment 3: Lululemonade Email Launch Flow</span>
+    <span class="pts-badge">40 pts</span>
+    <span class="status-tag tag-partial">Partial</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>Design a 3-email marketing flow for "Lululemonade" (fictional product). Write 150-200 word strategy overview and create 3 email mockups in Canva.</p>
+    <h4>AI Output</h4>
+    <div class="sample-output">
+      My 3-email Lululemonade launch sequence targets existing Lululemon email subscribers &mdash; wellness-focused consumers who already trust the brand. Email 1 ("Something New Is Brewing") builds awareness with a teaser. Email 2 ("The Science of Better Hydration") moves subscribers into consideration with the electrolyte formula and influencer social proof. Email 3 ("Your Exclusive First Sip &mdash; 20% Off") drives conversion with urgency. Each email builds on the last: curiosity &rarr; credibility &rarr; action.
+    </div>
+    <p class="gap-note">Gap: Cannot use Canva to create visual email mockups (PNG/JPG exports).</p>
+  </div>
+</div>
+</div>
+
+<!-- Week 3 -->
+<div class="week-section">
+<div class="week-header"><h2>Week 3</h2><span class="pts">60 pts &middot; Social Media Strategy I</span></div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Discussion 2: Social Media Hot Takes</span>
+    <span class="pts-badge">20 pts</span>
+    <span class="status-tag tag-mostly">Mostly</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>Scroll Instagram/TikTok for 5 minutes, count ads, screenshot one that caught your attention. In ~150 words: what caught your attention, why it works (or doesn't), what it tells you about the brand's strategy.</p>
+    <h4>AI Output</h4>
+    <p>AI can produce an articulate, informed analysis of a brand's social media post with specific observations about creative strategy, audience targeting, and effectiveness. Can reference real brands and current campaigns.</p>
+    <p class="gap-note">Gap: Cannot scroll a personal social media feed or capture a genuine screenshot of an ad encountered organically.</p>
+  </div>
+</div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Assignment 4: Books Are Magic Social Media Strategy</span>
+    <span class="pts-badge">40 pts</span>
+    <span class="status-tag tag-mostly">Mostly</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>Act as social media strategist for Books Are Magic (Brooklyn bookstore). Identify a competitor, conduct Instagram audit with engagement data table, analyze high/low-performing posts, evaluate funnel fit, propose a post idea.</p>
+    <h4>AI Output</h4>
+    <p>AI can visit @booksaremagicbk on Instagram, collect engagement metrics from recent posts, identify a competitor (e.g., McNally Jackson, Strand), build the audit table, analyze patterns, and propose a creative post concept with funnel alignment.</p>
+    <p class="gap-note">Gap: Would need browser access to collect live engagement data from Instagram.</p>
+  </div>
+</div>
+</div>
+
+<!-- Week 4 -->
+<div class="week-section">
+<div class="week-header"><h2>Week 4</h2><span class="pts">80 pts &middot; Campaign Briefs &amp; Midterm</span></div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Quiz 1: Midterm Knowledge Check</span>
+    <span class="pts-badge">20 pts</span>
+    <span class="status-tag tag-full">Full</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>20-question multiple choice covering funnel stages, digital marketing tactics, UX, email strategy, social media engagement, and segmentation.</p>
+    <h4>AI Output</h4>
+    <p>All 20 questions answered correctly from marketing domain knowledge. Topics: conversion vs. awareness, Instagram engagement tactics, funnel stages, UX usability, PageSpeed Insights, email sequences, subject line best practices, audience segmentation. No course-specific trick questions.</p>
+    <p><strong>Estimated score: 20/20</strong></p>
+  </div>
+</div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Midterm: Unreal Chocolate Campaign Brief</span>
+    <span class="pts-badge">50 pts</span>
+    <span class="status-tag tag-mostly">Mostly</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>Step into the role of digital strategist for UNREAL Snacks. Research the brand (website, Instagram, email), pick a campaign goal, plan a cross-channel Instagram + Email campaign with content/tone/funnel strategy, define KPIs, and map the customer journey.</p>
+    <h4>AI Output</h4>
+    <p>AI can visit unrealsnacks.com, analyze their Instagram presence, identify target audience (health-conscious snack buyers), define pain points, and build a complete campaign brief with platform strategy, KPIs (engagement rate, email open rate, conversion rate), and funnel mapping. This is a pure strategy assignment &mdash; AI's strongest territory.</p>
+    <p class="gap-note">Gap: Screenshots of the brand's website and Instagram.</p>
+  </div>
+</div>
+</div>
+
+<!-- Week 5 -->
+<div class="week-section">
+<div class="week-header"><h2>Week 5</h2><span class="pts">150 pts &middot; Social Media II &amp; Analytics</span></div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Assignment 6: One Week with Supergoop</span>
+    <span class="pts-badge">50 pts</span>
+    <span class="status-tag tag-partial">Partial</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>Design a social media post (PNG/JPG) for Supergoop, create a 7-day content calendar with funnel mapping, research audience/pain points, write 300-400 word strategy reflection.</p>
+    <h4>AI Output</h4>
+    <p>AI can produce the content calendar, audience research, and strategy reflection. Can describe the social media post concept in detail (visual direction, copy, CTA, format).</p>
+    <p class="gap-note">Gap: Cannot produce the social media post PNG/JPG visual design.</p>
+  </div>
+</div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Assignment 6: Google Analytics Scavenger Hunt</span>
+    <span class="pts-badge">40 pts</span>
+    <span class="status-tag tag-not">Not</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>Answer 15 questions using data from a GA4 demo account (January 2025), identify 3 key marketing issues, provide 3 recommendations, include screenshots from GA4.</p>
+    <h4>AI Output</h4>
+    <p>AI cannot access GA4 dashboards or extract live analytics data. This is the single most AI-resistant assignment in the course. The analysis depends entirely on having the actual data, which requires navigating an authenticated analytics dashboard.</p>
+    <p class="gap-note">Blocker: Requires live GA4 dashboard access &mdash; impossible for AI.</p>
+  </div>
+</div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Quiz 2: GA4 Knowledge Check</span>
+    <span class="pts-badge">20 pts</span>
+    <span class="status-tag tag-partial">Partial</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>Multiple choice quiz on Google Analytics 4 concepts, reports, and metrics.</p>
+    <h4>AI Output</h4>
+    <p>AI has strong GA4 conceptual knowledge but some questions may reference specific course resources or demo account data not available to AI.</p>
+    <p><strong>Estimated score: 14-18/20</strong></p>
+  </div>
+</div>
+</div>
+
+<!-- Week 6 -->
+<div class="week-section">
+<div class="week-header"><h2>Week 6</h2><span class="pts">180 pts &middot; SEO &amp; Final Project Kickoff</span></div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Assignment 7: SEO Showdown (Philadelphia Eagles)</span>
+    <span class="pts-badge">50 pts</span>
+    <span class="status-tag tag-mostly">Mostly</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>Use Ubersuggest for keyword research (top 3 keywords + screenshot), use a second tool, compare outputs, select 3 final keywords with justification, cite sources.</p>
+    <h4>AI Output</h4>
+    <p>AI can conduct keyword research using SEO knowledge, compare tool methodologies, and write a strong justification for final keyword selection. Can describe Ubersuggest/Google Keyword Planner outputs accurately.</p>
+    <p class="gap-note">Gap: Screenshots from Ubersuggest and the second keyword tool.</p>
+  </div>
+</div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Final Project Proposal: Brand &amp; Audience Research</span>
+    <span class="pts-badge">65 pts</span>
+    <span class="status-tag tag-mostly">Mostly</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>Brand audit with annotated screenshots, competitor analysis of 2 brands, audience persona from reviews/interviews, opportunity gap identification. Professional formatting with dated, captioned screenshots.</p>
+    <h4>AI Output</h4>
+    <p>AI can choose a brand, visit its website and competitors, analyze Instagram presence, read customer reviews, build a buyer persona, and identify strategic gaps. Can produce a professional research report with all required analytical components.</p>
+    <p class="gap-note">Gap: Labeled, annotated, dated screenshots throughout.</p>
+  </div>
+</div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Quiz 3: Research &amp; Strategy Knowledge Check</span>
+    <span class="pts-badge">20 pts</span>
+    <span class="status-tag tag-full">Full</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>Multiple choice on SEO, audience research, competitor analysis, and brand strategy.</p>
+    <h4>AI Output</h4>
+    <p>Conceptual marketing knowledge questions. AI has strong domain knowledge across all topics.</p>
+    <p><strong>Estimated score: 18-20/20</strong></p>
+  </div>
+</div>
+</div>
+
+<!-- Week 7 -->
+<div class="week-section">
+<div class="week-header"><h2>Week 7</h2><span class="pts">145 pts &middot; Ethics &amp; Strategy Refinement</span></div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Discussion 3: Just Because You Can Doesn't Mean You Should</span>
+    <span class="pts-badge">20 pts</span>
+    <span class="status-tag tag-full">Full</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>Ethics discussion on when digital marketing personalization crosses into manipulation. References predictive analytics case studies from course resources.</p>
+    <h4>AI Output</h4>
+    <p>AI can articulate nuanced positions on data privacy, predictive analytics ethics, manipulative design patterns, and responsible marketing. Ethics argumentation is one of AI's strongest capabilities.</p>
+  </div>
+</div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Assignment 8: Equinox Ethics Brief</span>
+    <span class="pts-badge">40 pts</span>
+    <span class="status-tag tag-full">Full</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>1-2 page ethics brief: risk analysis of Equinox marketing scenario (referencing predictive analytics), marketing vs. manipulation analysis, 3 strategic fixes, ethical marketing pledge (3-5 bullet points).</p>
+    <h4>AI Output</h4>
+    <p>Pure written ethics analysis with no visual/tool requirements. AI can research Equinox's marketing practices, analyze ethical implications, propose specific fixes, and write a professional pledge. No screenshots, no tools, no video needed.</p>
+    <p><strong>Estimated score: 36-40/40</strong></p>
+  </div>
+</div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Final Project Draft: Strategy Refinement</span>
+    <span class="pts-badge">65 pts</span>
+    <span class="status-tag tag-mostly">Mostly</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>Refine final project strategy: 1-2 SMART goals, 2-3 digital channels with funnel alignment, content/campaign strategy with multiple formats, 3-5 KPIs with tracking methods, integration logic.</p>
+    <h4>AI Output</h4>
+    <p>AI can produce a professional strategy document with SMART goals, justified channel selection, detailed content planning, and KPI definitions. Builds on the Week 6 proposal.</p>
+    <p class="gap-note">Gap: Depends on continuity with a student's previously chosen brand.</p>
+  </div>
+</div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Quiz 4: Digital Marketing Strategy Check</span>
+    <span class="pts-badge">20 pts</span>
+    <span class="status-tag tag-full">Full</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>Multiple choice on digital marketing strategy, ethics, and analytics (Units 9-12).</p>
+    <h4>AI Output</h4>
+    <p>Conceptual questions well within AI's marketing domain knowledge.</p>
+    <p><strong>Estimated score: 18-20/20</strong></p>
+  </div>
+</div>
+</div>
+
+<!-- Week 8 -->
+<div class="week-section">
+<div class="week-header"><h2>Week 8</h2><span class="pts">95 pts &middot; Final Submission &amp; Async Fair</span></div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Final Project Submission</span>
+    <span class="pts-badge">70 pts</span>
+    <span class="status-tag tag-partial">Partial</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>Complete strategy document + presentation slides + video pitch. Rubric: executive summary (10), audience/competitive analysis (10), channel/content strategy (10), funnel/KPI plan (10), slide design (10), video pitch delivery (15), overall coherence (5).</p>
+    <h4>AI Output</h4>
+    <p>AI can produce all written strategy components (55 pts worth) at professional quality. Cannot create presentation slides (.pptx) or record a video pitch.</p>
+    <p class="gap-note">Blockers: Slide design (10 pts) requires PowerPoint/Slides. Video pitch (15 pts) requires human face/voice &mdash; completely impossible for AI.</p>
+  </div>
+</div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Async Fair &amp; Final Reflection</span>
+    <span class="pts-badge">20 pts</span>
+    <span class="status-tag tag-not">Not</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>Virtual presentation fair: share final project video/slides, view and comment on classmates' presentations, write personal course reflection.</p>
+    <h4>AI Output</h4>
+    <p>Requires a completed video pitch (which AI cannot produce), sharing it in a discussion thread, and responding to other students' specific presentations. Could write a generic reflection but cannot participate in the fair.</p>
+    <p class="gap-note">Blocker: Depends on video pitch + peer interaction with specific student content.</p>
+  </div>
+</div>
+
+<div class="assignment-card">
+  <div class="assignment-head" onclick="toggle(this)">
+    <span class="assignment-title">Extra Credit: End-of-Semester Survey</span>
+    <span class="pts-badge">5 pts</span>
+    <span class="status-tag tag-full">Full</span>
+    <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+  </div>
+  <div class="assignment-body">
+    <h4>Prompt</h4>
+    <p>Completion-based survey.</p>
+    <h4>AI Output</h4>
+    <p>Can complete with plausible responses.</p>
+  </div>
+</div>
+</div>
+
+</section>
+
+<!-- ════════════════════════════════════════ PROCESS & RESULTS ════════════════════════════════════════ -->
+<section class="tab-panel" id="process">
+
+<div class="process-section">
+  <h2>How the Audit Was Conducted</h2>
+  <p>Claude Opus 4.6 navigated the full DMARK I course using the Claude-in-Chrome browser automation extension, accessing Rize Learn as an instructor and Canvas for quiz previews.</p>
+
+  <h3>Steps</h3>
+  <ol>
+    <li>Navigated to the course schedule in Rize Learn to map all 8 weeks and 14 units</li>
+    <li>For each week, opened every graded assignment to capture the full prompt, requirements, steps, and rubric</li>
+    <li>For quizzes, clicked "Open in Canvas" and used the Preview function to capture all questions and answer choices</li>
+    <li>For discussions, read existing student responses to understand the prompt expectations and response patterns</li>
+    <li>Assessed each assignment against AI capabilities: text generation, web browsing, visual design, tool access, and video/audio production</li>
+  </ol>
+
+  <h3>Tools Used</h3>
+  <ul>
+    <li><strong>Claude-in-Chrome extension</strong> &mdash; Browser automation for navigating Rize Learn and Canvas</li>
+    <li><strong>Rize Learn</strong> (app.rize.education) &mdash; Primary course platform, instructor view</li>
+    <li><strong>Canvas</strong> (canvas.rize.education) &mdash; Quiz preview mode for question capture</li>
+  </ul>
+
+  <h3>Limitations Encountered</h3>
+  <ul>
+    <li>Browser extension disconnected repeatedly (~6 times), requiring manual reconnection</li>
+    <li>"Get Started" buttons on week overview pages often did not respond to click events</li>
+    <li>Discussion pages in Weeks 7-8 did not render body content (possibly expired course term)</li>
+    <li>Assignment body text sometimes showed "..." truncation; rubrics always loaded fully</li>
+    <li>Quiz questions were only accessible via Canvas preview mode, requiring a separate login</li>
+  </ul>
+</div>
+
+<div class="process-section">
+  <h2>Results at a Glance</h2>
+
+  <div class="findings-grid">
+    <div class="finding-card">
+      <h4>Assignments Audited</h4>
+      <div class="num">29</div>
+      <p>Across 8 weeks, 14 units</p>
+    </div>
+    <div class="finding-card">
+      <h4>Quiz Questions Captured</h4>
+      <div class="num">32</div>
+      <p>Onboarding (12) + Midterm (20)</p>
+    </div>
+    <div class="finding-card">
+      <h4>Fully Completable</h4>
+      <div class="num">240 pts</div>
+      <p>Quizzes, surveys, ethics work</p>
+    </div>
+    <div class="finding-card">
+      <h4>Primary Blocker</h4>
+      <div class="num">Screenshots</div>
+      <p>~10 assignments require visual evidence</p>
+    </div>
+  </div>
+</div>
+
+<div class="process-section">
+  <h2>What AI Could Do</h2>
+  <ul>
+    <li><strong>Written strategy and analysis</strong> &mdash; Every text-based deliverable (funnel analyses, website audits, email strategies, campaign briefs, ethics analyses) could be produced at the quality level the rubrics describe as "Meets Standard" to "Outstanding"</li>
+    <li><strong>Quizzes</strong> &mdash; All 4 quizzes (72 total questions) are answerable from marketing domain knowledge. The Onboarding Quiz and Midterm were answered with 100% accuracy</li>
+    <li><strong>Brand research</strong> &mdash; Could visit real websites, analyze marketing tactics, evaluate competitors, and produce informed critiques and buyer personas</li>
+    <li><strong>Marketing vocabulary</strong> &mdash; Naturally uses correct terminology (CTAs, funnel stages, conversion, UX, SMART goals, KPIs) in appropriate context</li>
+    <li><strong>Ethics and critical thinking</strong> &mdash; The Equinox Ethics Brief was one of the strongest assignments for AI. Nuanced ethical analysis of marketing practices is well within capability</li>
+    <li><strong>Multi-part strategy documents</strong> &mdash; The Final Project (Weeks 6-8) involves brand audit, competitor analysis, audience research, channel strategy, content planning, KPI definition, and funnel mapping. AI can produce professional-quality work for every written component</li>
+  </ul>
+</div>
+
+<div class="process-section">
+  <h2>What Blocked AI</h2>
+
+  <table class="blocker-table">
+    <thead>
+      <tr><th>Blocker</th><th>Affected Assignments</th><th>Impact</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Screenshots</strong></td>
+        <td>Ghia Funnel Analysis, Website Audit, Social Media Hot Takes, Books Are Magic, Midterm Campaign Brief, Supergoop, SEO Showdown, Final Project Proposal, GA4 Scavenger Hunt</td>
+        <td>~100 pts of reduced scores across ~10 assignments</td>
+      </tr>
+      <tr>
+        <td><strong>Video recording</strong></td>
+        <td>Final Project Submission (pitch delivery), Async Fair</td>
+        <td>35 pts completely inaccessible</td>
+      </tr>
+      <tr>
+        <td><strong>Canva / visual design</strong></td>
+        <td>Lululemonade Email Flow, Supergoop social post, Final Project slides</td>
+        <td>~30 pts across 3 assignments</td>
+      </tr>
+      <tr>
+        <td><strong>Live tool access (GA4)</strong></td>
+        <td>Google Analytics Scavenger Hunt</td>
+        <td>40 pts &mdash; single hardest assignment</td>
+      </tr>
+      <tr>
+        <td><strong>Platform interactions</strong></td>
+        <td>Career Milestones (MyCareer Onboarding, ROI Foundation, Job Discovery, etc.)</td>
+        <td>0 pts (all ungraded)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="process-section">
+  <h2>Scenario Estimates</h2>
+
+  <table class="scenario-table">
+    <thead>
+      <tr><th>Scenario</th><th>Estimated Points</th><th>Range</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>AI alone, no human assistance</td>
+        <td><span class="range">530&ndash;620 / 1,000</span></td>
+        <td>53&ndash;62%</td>
+      </tr>
+      <tr>
+        <td>AI + human provides screenshots</td>
+        <td><span class="range">650&ndash;730 / 1,000</span></td>
+        <td>65&ndash;73%</td>
+      </tr>
+      <tr>
+        <td>AI + human handles screenshots, Canva, slides</td>
+        <td><span class="range">720&ndash;800 / 1,000</span></td>
+        <td>72&ndash;80%</td>
+      </tr>
+      <tr>
+        <td>AI + human handles all non-video tasks</td>
+        <td><span class="range">830&ndash;900 / 1,000</span></td>
+        <td>83&ndash;90%</td>
+      </tr>
+      <tr>
+        <td>AI writes everything; human delivers video pitch</td>
+        <td><span class="range">900&ndash;980 / 1,000</span></td>
+        <td>90&ndash;98%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="process-section">
+  <h2>Strongest AI-Resistance Patterns in This Course</h2>
+  <ol>
+    <li><strong>GA4 Scavenger Hunt</strong> &mdash; Requires navigating a live, authenticated analytics dashboard and extracting specific data with screenshots. This pattern (live tool + specific data + screenshot evidence) is the strongest defense observed</li>
+    <li><strong>Video pitch</strong> &mdash; Requires human face/voice on camera presenting strategy work. Currently impossible for AI</li>
+    <li><strong>Screenshot-dependent rubrics</strong> &mdash; Assignments where screenshots are scored separately (not just encouraged) create a hard gap between what AI can write and what it can submit</li>
+    <li><strong>Canva deliverables</strong> &mdash; Requiring visual mockups in a specific design tool blocks AI from producing complete submissions</li>
+  </ol>
+</div>
+
+</section>
+
+</div>
+
+<script>
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+function toggle(head) {
+  head.closest('.assignment-card').classList.toggle('open');
+}
+</script>
+</body>
+</html>

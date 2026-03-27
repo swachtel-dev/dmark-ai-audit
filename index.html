@@ -514,23 +514,22 @@ body {
 
   <div class="cover-summary">
     <p>This audit navigated the full DMARK I course through Rize Learn and Canvas as an instructor-view student, capturing every graded assignment prompt, rubric, and quiz question. For each assignment, the audit assessed whether Claude Opus 4.6 could produce a submission and identified specific blockers.</p>
-    <p style="margin-top:12px">Of the 1,000 graded points in the course, <strong>610 points (61%)</strong> are fully or mostly completable by AI with no human involvement. With a human providing screenshots and visual assets, that rises to <strong>~800 points (80%)</strong>.</p>
+    <p style="margin-top:12px">Of the 1,000 graded points in the course, <strong>~750 points (75%)</strong> are fully or mostly completable by AI alone (including browser-automated screenshots). With a human providing Canva mockups and video, that rises to <strong>~950 points (95%)</strong>.</p>
   </div>
 
   <div class="point-bar-section">
     <h3>Points by AI Completability</h3>
     <div class="point-bar">
-      <div class="bar-full" style="width:24%">240 pts</div>
-      <div class="bar-mostly" style="width:37%">370 pts</div>
-      <div class="bar-partial" style="width:17%">170 pts</div>
-      <div class="bar-not" style="width:13%">130 pts</div>
+      <div class="bar-full" style="width:64%">640 pts</div>
+      <div class="bar-partial" style="width:19%">190 pts</div>
+      <div class="bar-not" style="width:6%">60</div>
     </div>
     <div class="bar-legend">
-      <span><span class="dot" style="background:var(--full)"></span>Fully completable (240 pts)</span>
-      <span><span class="dot" style="background:var(--mostly)"></span>Mostly completable (370 pts)</span>
-      <span><span class="dot" style="background:var(--partial)"></span>Partially completable (170 pts)</span>
-      <span><span class="dot" style="background:var(--not)"></span>Not completable (130 pts)</span>
+      <span><span class="dot" style="background:var(--full)"></span>Fully completable w/ browser automation (640 pts)</span>
+      <span><span class="dot" style="background:var(--partial)"></span>Partially completable &mdash; needs Canva, video, or slides (190 pts)</span>
+      <span><span class="dot" style="background:var(--not)"></span>Not completable &mdash; GA4 dashboard, async fair (60 pts)</span>
     </div>
+    <p style="font-size:12px; color:var(--mid); margin-top:8px;">Note: 110 pts are ungraded career milestones (not shown).</p>
   </div>
 </div>
 </section>
@@ -546,7 +545,7 @@ body {
   <div class="assignment-head" onclick="toggle(this)">
     <span class="assignment-title">Onboarding Discussion: Welcome to Digital Marketing</span>
     <span class="pts-badge">15 pts</span>
-    <span class="status-tag tag-mostly">Mostly</span>
+    <span class="status-tag tag-full">Full</span>
     <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
   </div>
   <div class="assignment-body">
@@ -558,7 +557,7 @@ body {
       Hi everyone! I'm [Name], a sophomore at [School] majoring in Business Administration. Fun fact: I've visited every national park on the East Coast! I'm most excited about the social media marketing units.<br><br>
       An ad that genuinely worked on me was a Spotify Wrapped-style Instagram story ad for Headspace. It showed my listening habits and said something like "You listened to 47 hours of lo-fi beats &mdash; sounds like you could use some meditation." It felt personalized, playful, and non-judgmental. I saw it in my Instagram stories feed in December. It worked because it used data I already shared to make the pitch feel personal rather than generic. I didn't feel sold to &mdash; I felt understood.
     </div>
-    <p class="gap-note">Gap: No actual screenshot of the ad.</p>
+    <p class="gap-note">Browser automation can screenshot real ads from brand websites/Instagram. Could also describe an ad in sufficient detail.</p>
   </div>
 </div>
 
@@ -597,7 +596,7 @@ body {
   <div class="assignment-head" onclick="toggle(this)">
     <span class="assignment-title">Assignment 1: Ghia Funnel Analysis</span>
     <span class="pts-badge">40 pts</span>
-    <span class="status-tag tag-mostly">Mostly</span>
+    <span class="status-tag tag-full">Full</span>
     <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
   </div>
   <div class="assignment-body">
@@ -610,7 +609,7 @@ body {
       <strong>Conversion &mdash; Homepage Pop-up:</strong> A pop-up offers 10% off your first order in exchange for an email signup. Textbook conversion tactic.<br><br>
       <strong>Loyalty &mdash; Subscribe &amp; Save:</strong> Ghia offers subscription pricing and post-purchase recipe emails to keep customers engaged.
     </div>
-    <p class="gap-note">Gap: Screenshots of website, Instagram, Amazon reviews needed from a human.</p>
+    <p class="gap-note">Browser automation can visit and screenshot Ghia's website, Instagram, and Amazon reviews directly.</p>
   </div>
 </div>
 </div>
@@ -639,7 +638,7 @@ body {
   <div class="assignment-head" onclick="toggle(this)">
     <span class="assignment-title">Discussion 1: Bad Website Design</span>
     <span class="pts-badge">20 pts</span>
-    <span class="status-tag tag-mostly">Mostly</span>
+    <span class="status-tag tag-full">Full</span>
     <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
   </div>
   <div class="assignment-body">
@@ -650,7 +649,7 @@ body {
       The most frustrating element on User Inyerface was the password creation form. The placeholder text doesn't disappear when you click into the field &mdash; you have to manually delete "Choose Password" before typing your own. Combined with obscure requirements and a countdown timer creating artificial urgency, even the simplest signup task becomes maddening.<br><br>
       On a real e-commerce site, this kind of friction at the account creation stage would kill conversions. This teaches marketers that even small UX failures compound &mdash; each friction point is another reason for a customer to leave.
     </div>
-    <p class="gap-note">Gap: Screenshot requires browser automation or human capture.</p>
+    <p class="gap-note">Browser automation can visit userinyerface.com and screenshot frustrating elements directly.</p>
   </div>
 </div>
 
@@ -658,7 +657,7 @@ body {
   <div class="assignment-head" onclick="toggle(this)">
     <span class="assignment-title">Assignment 2: Website Audit &mdash; Strategy Meets UX</span>
     <span class="pts-badge">40 pts</span>
-    <span class="status-tag tag-mostly">Mostly</span>
+    <span class="status-tag tag-full">Full</span>
     <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
   </div>
   <div class="assignment-body">
@@ -666,7 +665,7 @@ body {
     <p>Choose a brand website, audit it (first impressions, navigation, CTAs, mobile friendliness, funnel strategy, Google PageSpeed Insights), write a 300-500 word brief with strengths and improvements.</p>
     <h4>AI Output</h4>
     <p>AI can visit any website, analyze UX, evaluate funnel strategy, and run Google PageSpeed Insights. Can produce a detailed, professional audit brief with specific observations per rubric criterion.</p>
-    <p class="gap-note">Gap: Screenshots of the website and PageSpeed results.</p>
+    <p class="gap-note">Browser automation can visit websites, run PageSpeed Insights, and capture all screenshots directly.</p>
   </div>
 </div>
 
@@ -697,7 +696,7 @@ body {
   <div class="assignment-head" onclick="toggle(this)">
     <span class="assignment-title">Discussion 2: Social Media Hot Takes</span>
     <span class="pts-badge">20 pts</span>
-    <span class="status-tag tag-mostly">Mostly</span>
+    <span class="status-tag tag-full">Full</span>
     <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
   </div>
   <div class="assignment-body">
@@ -705,7 +704,7 @@ body {
     <p>Scroll Instagram/TikTok for 5 minutes, count ads, screenshot one that caught your attention. In ~150 words: what caught your attention, why it works (or doesn't), what it tells you about the brand's strategy.</p>
     <h4>AI Output</h4>
     <p>AI can produce an articulate, informed analysis of a brand's social media post with specific observations about creative strategy, audience targeting, and effectiveness. Can reference real brands and current campaigns.</p>
-    <p class="gap-note">Gap: Cannot scroll a personal social media feed or capture a genuine screenshot of an ad encountered organically.</p>
+    <p class="gap-note">Browser automation can visit brand Instagram/TikTok pages and screenshot posts directly. Cannot replicate a personal feed scroll.</p>
   </div>
 </div>
 
@@ -713,7 +712,7 @@ body {
   <div class="assignment-head" onclick="toggle(this)">
     <span class="assignment-title">Assignment 4: Books Are Magic Social Media Strategy</span>
     <span class="pts-badge">40 pts</span>
-    <span class="status-tag tag-mostly">Mostly</span>
+    <span class="status-tag tag-full">Full</span>
     <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
   </div>
   <div class="assignment-body">
@@ -721,7 +720,7 @@ body {
     <p>Act as social media strategist for Books Are Magic (Brooklyn bookstore). Identify a competitor, conduct Instagram audit with engagement data table, analyze high/low-performing posts, evaluate funnel fit, propose a post idea.</p>
     <h4>AI Output</h4>
     <p>AI can visit @booksaremagicbk on Instagram, collect engagement metrics from recent posts, identify a competitor (e.g., McNally Jackson, Strand), build the audit table, analyze patterns, and propose a creative post concept with funnel alignment.</p>
-    <p class="gap-note">Gap: Would need browser access to collect live engagement data from Instagram.</p>
+    <p class="gap-note">Browser automation can visit Instagram profiles and collect visible engagement metrics (likes, comments) from recent posts.</p>
   </div>
 </div>
 </div>
@@ -750,7 +749,7 @@ body {
   <div class="assignment-head" onclick="toggle(this)">
     <span class="assignment-title">Midterm: Unreal Chocolate Campaign Brief</span>
     <span class="pts-badge">50 pts</span>
-    <span class="status-tag tag-mostly">Mostly</span>
+    <span class="status-tag tag-full">Full</span>
     <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
   </div>
   <div class="assignment-body">
@@ -758,7 +757,7 @@ body {
     <p>Step into the role of digital strategist for UNREAL Snacks. Research the brand (website, Instagram, email), pick a campaign goal, plan a cross-channel Instagram + Email campaign with content/tone/funnel strategy, define KPIs, and map the customer journey.</p>
     <h4>AI Output</h4>
     <p>AI can visit unrealsnacks.com, analyze their Instagram presence, identify target audience (health-conscious snack buyers), define pain points, and build a complete campaign brief with platform strategy, KPIs (engagement rate, email open rate, conversion rate), and funnel mapping. This is a pure strategy assignment &mdash; AI's strongest territory.</p>
-    <p class="gap-note">Gap: Screenshots of the brand's website and Instagram.</p>
+    <p class="gap-note">Browser automation can visit and screenshot the brand's website and Instagram directly.</p>
   </div>
 </div>
 </div>
@@ -824,7 +823,7 @@ body {
   <div class="assignment-head" onclick="toggle(this)">
     <span class="assignment-title">Assignment 7: SEO Showdown (Philadelphia Eagles)</span>
     <span class="pts-badge">50 pts</span>
-    <span class="status-tag tag-mostly">Mostly</span>
+    <span class="status-tag tag-full">Full</span>
     <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
   </div>
   <div class="assignment-body">
@@ -832,7 +831,7 @@ body {
     <p>Use Ubersuggest for keyword research (top 3 keywords + screenshot), use a second tool, compare outputs, select 3 final keywords with justification, cite sources.</p>
     <h4>AI Output</h4>
     <p>AI can conduct keyword research using SEO knowledge, compare tool methodologies, and write a strong justification for final keyword selection. Can describe Ubersuggest/Google Keyword Planner outputs accurately.</p>
-    <p class="gap-note">Gap: Screenshots from Ubersuggest and the second keyword tool.</p>
+    <p class="gap-note">Browser automation can run Ubersuggest and other keyword tools and capture screenshots directly.</p>
   </div>
 </div>
 
@@ -840,7 +839,7 @@ body {
   <div class="assignment-head" onclick="toggle(this)">
     <span class="assignment-title">Final Project Proposal: Brand &amp; Audience Research</span>
     <span class="pts-badge">65 pts</span>
-    <span class="status-tag tag-mostly">Mostly</span>
+    <span class="status-tag tag-full">Full</span>
     <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
   </div>
   <div class="assignment-body">
@@ -848,7 +847,7 @@ body {
     <p>Brand audit with annotated screenshots, competitor analysis of 2 brands, audience persona from reviews/interviews, opportunity gap identification. Professional formatting with dated, captioned screenshots.</p>
     <h4>AI Output</h4>
     <p>AI can choose a brand, visit its website and competitors, analyze Instagram presence, read customer reviews, build a buyer persona, and identify strategic gaps. Can produce a professional research report with all required analytical components.</p>
-    <p class="gap-note">Gap: Labeled, annotated, dated screenshots throughout.</p>
+    <p class="gap-note">Browser automation can capture all required screenshots. Annotation/labeling would need post-processing.</p>
   </div>
 </div>
 
@@ -908,7 +907,7 @@ body {
   <div class="assignment-head" onclick="toggle(this)">
     <span class="assignment-title">Final Project Draft: Strategy Refinement</span>
     <span class="pts-badge">65 pts</span>
-    <span class="status-tag tag-mostly">Mostly</span>
+    <span class="status-tag tag-full">Full</span>
     <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
   </div>
   <div class="assignment-body">
@@ -916,7 +915,7 @@ body {
     <p>Refine final project strategy: 1-2 SMART goals, 2-3 digital channels with funnel alignment, content/campaign strategy with multiple formats, 3-5 KPIs with tracking methods, integration logic.</p>
     <h4>AI Output</h4>
     <p>AI can produce a professional strategy document with SMART goals, justified channel selection, detailed content planning, and KPI definitions. Builds on the Week 6 proposal.</p>
-    <p class="gap-note">Gap: Depends on continuity with a student's previously chosen brand.</p>
+    <p class="gap-note">AI can maintain brand continuity across assignments. Browser automation handles any needed screenshots.</p>
   </div>
 </div>
 
@@ -1040,13 +1039,13 @@ body {
     </div>
     <div class="finding-card">
       <h4>Fully Completable</h4>
-      <div class="num">240 pts</div>
-      <p>Quizzes, surveys, ethics work</p>
+      <div class="num">640 pts</div>
+      <p>With browser automation for screenshots</p>
     </div>
     <div class="finding-card">
       <h4>Primary Blocker</h4>
-      <div class="num">Screenshots</div>
-      <p>~10 assignments require visual evidence</p>
+      <div class="num">Video</div>
+      <p>Final project pitch + async fair (35 pts)</p>
     </div>
   </div>
 </div>
@@ -1073,8 +1072,8 @@ body {
     <tbody>
       <tr>
         <td><strong>Screenshots</strong></td>
-        <td>Ghia Funnel Analysis, Website Audit, Social Media Hot Takes, Books Are Magic, Midterm Campaign Brief, Supergoop, SEO Showdown, Final Project Proposal, GA4 Scavenger Hunt</td>
-        <td>~100 pts of reduced scores across ~10 assignments</td>
+        <td>Resolved via browser automation for most assignments. Only GA4 dashboard screenshots remain blocked (requires authenticated access).</td>
+        <td>No longer a significant blocker (~0 pts impact except GA4)</td>
       </tr>
       <tr>
         <td><strong>Video recording</strong></td>
@@ -1109,29 +1108,29 @@ body {
     </thead>
     <tbody>
       <tr>
-        <td>AI alone, no human assistance</td>
-        <td><span class="range">530&ndash;620 / 1,000</span></td>
-        <td>53&ndash;62%</td>
+        <td>AI alone with browser automation</td>
+        <td><span class="range">650&ndash;720 / 1,000</span></td>
+        <td>65&ndash;72%</td>
       </tr>
       <tr>
-        <td>AI + human provides screenshots</td>
-        <td><span class="range">650&ndash;730 / 1,000</span></td>
-        <td>65&ndash;73%</td>
+        <td>AI + human provides GA4 data only</td>
+        <td><span class="range">700&ndash;760 / 1,000</span></td>
+        <td>70&ndash;76%</td>
       </tr>
       <tr>
-        <td>AI + human handles screenshots, Canva, slides</td>
-        <td><span class="range">720&ndash;800 / 1,000</span></td>
-        <td>72&ndash;80%</td>
+        <td>AI + human handles Canva and slides</td>
+        <td><span class="range">800&ndash;870 / 1,000</span></td>
+        <td>80&ndash;87%</td>
       </tr>
       <tr>
         <td>AI + human handles all non-video tasks</td>
-        <td><span class="range">830&ndash;900 / 1,000</span></td>
-        <td>83&ndash;90%</td>
+        <td><span class="range">880&ndash;940 / 1,000</span></td>
+        <td>88&ndash;94%</td>
       </tr>
       <tr>
         <td>AI writes everything; human delivers video pitch</td>
-        <td><span class="range">900&ndash;980 / 1,000</span></td>
-        <td>90&ndash;98%</td>
+        <td><span class="range">920&ndash;980 / 1,000</span></td>
+        <td>92&ndash;98%</td>
       </tr>
     </tbody>
   </table>
